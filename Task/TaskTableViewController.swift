@@ -12,15 +12,33 @@ class TaskTableViewController: UITableViewController, AddItemViewControllerDeleg
     var taskName: String?
     var taskDetail: String?
     var tasks: [Task] = []
+    var timer: Timer?
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         setUpUserInterface()
-        
+        timer = Timer.scheduledTimer(timeInterval: 1, target: self, selector: #selector(checkForOutdatedTasks), userInfo: nil, repeats: true)
         // Uncomment the following line to preserve selection between presentations
         // self.clearsSelectionOnViewWillAppear = false
 
         // Uncomment the following line to display an Edit button in the navigation bar for this view controller.
         // self.navigationItem.rightBarButtonItem = self.editButtonItem()
+    }
+    
+    func checkForOutdatedTasks() {
+        for (index, task) in tasks.enumerated() {
+            if task.isCompleted() {
+                let rightNow = NSDate()
+                let timePassed = rightNow.timeIntervalSince(task.completedTime as! Date)
+                print(timePassed)
+                if timePassed > 84600 {
+                    self.tasks.remove(at: index)
+                    self.tableView.deleteRows(at: [IndexPath(row: index, section: 0)], with: .none)
+                    self.tableView.reloadData()
+                }
+                
+            }
+        }
     }
     
     func addTaskButtonPressed(sender: UIControlEvents) {
@@ -106,6 +124,7 @@ class TaskTableViewController: UITableViewController, AddItemViewControllerDeleg
         } else {
             cell?.imageView!.image = UIImage(named:"OK_complete.png")
             tasks[row].completed = true
+            tasks[row].startTimer()
         }
         
         
@@ -114,7 +133,7 @@ class TaskTableViewController: UITableViewController, AddItemViewControllerDeleg
 
     
     override func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 100
+        return 70
     }
     
     

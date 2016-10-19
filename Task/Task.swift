@@ -12,19 +12,20 @@ class Task: NSObject {
     var title: String?
     var detail: String?
     var completed: Bool = false
-    var timer: Timer?
-    var TTL: Int
+    var completedTime: NSDate?
+    
     init(title: String, detail: String) {
         self.title = title
         self.detail = detail
-        self.TTL = 24 * 60 * 60
+        
     }
     
     func isCompleted() -> Bool {
         return completed
     }
     
-    func completeTask() {
-        
+    func startTimer() {
+        self.completedTime = NSDate()
+        print(completedTime)
     }
 }
